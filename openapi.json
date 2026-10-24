@@ -1,0 +1,386 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API Siswa",
+    "description": "Dokumentasi REST API Siswa - Bootcamp Sanbercode Golang",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8081",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/siswa": {
+      "get": {
+        "summary": "Get all siswa",
+        "description": "Mengambil semua daftar siswa",
+        "tags": [
+          "Siswa"
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar siswa berhasil diambil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseList"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create siswa",
+        "description": "Menambahkan data siswa baru",
+        "tags": [
+          "Siswa"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSiswaInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Siswa berhasil ditambahkan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseSingle"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validasi input gagal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/siswa/{id}": {
+      "get": {
+        "summary": "Get siswa by ID",
+        "description": "Mengambil data detail siswa berdasarkan ID",
+        "tags": [
+          "Siswa"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID Siswa",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detail siswa berhasil ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseSingle"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Siswa tidak ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update siswa",
+        "description": "Memperbarui data siswa berdasarkan ID",
+        "tags": [
+          "Siswa"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID Siswa",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSiswaInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Data siswa berhasil diperbarui",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseSingle"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validasi input gagal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Siswa tidak ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete siswa",
+        "description": "Menghapus data siswa berdasarkan ID",
+        "tags": [
+          "Siswa"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID Siswa",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Siswa berhasil dihapus",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Siswa tidak ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Siswa": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "nama": {
+            "type": "string",
+            "example": "Budi Santoso"
+          },
+          "nis": {
+            "type": "string",
+            "example": "12345"
+          },
+          "kelas": {
+            "type": "string",
+            "example": "XII-RPL-1"
+          }
+        },
+        "required": [
+          "id",
+          "nama",
+          "nis",
+          "kelas"
+        ]
+      },
+      "CreateSiswaInput": {
+        "type": "object",
+        "properties": {
+          "nama": {
+            "type": "string",
+            "example": "Budi Santoso"
+          },
+          "nis": {
+            "type": "string",
+            "example": "12345"
+          },
+          "kelas": {
+            "type": "string",
+            "example": "XII-RPL-1"
+          }
+        },
+        "required": [
+          "nama",
+          "nis",
+          "kelas"
+        ]
+      },
+      "APIResponseBase": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "message": {
+            "type": "string",
+            "example": "Operasi berhasil"
+          }
+        }
+      },
+      "APIResponseSingle": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "message": {
+            "type": "string",
+            "example": "Berhasil memproses data siswa"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Siswa"
+          }
+        }
+      },
+      "APIResponseList": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "message": {
+            "type": "string",
+            "example": "Daftar siswa berhasil diambil"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Siswa"
+            }
+          }
+        }
+      },
+      "APIResponseError": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "error"
+          },
+          "message": {
+            "type": "string",
+            "example": "Terjadi kesalahan"
+          },
+          "error": {
+            "type": "string",
+            "example": "Error message details"
+          }
+        }
+      }
+    }
+  }
+}
