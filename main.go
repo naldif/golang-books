@@ -326,10 +326,15 @@ func main() {
 	r.PUT("/siswa/:id", updateSiswa)
 	r.DELETE("/siswa/:id", deleteSiswa)
 
-	fmt.Println("Aplikasi berjalan di http://localhost:8081")
-	fmt.Println("Dokumentasi Scalar dapat diakses di http://localhost:8081/scalar atau http://localhost:8081/docs")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8081"
+	}
 
-	if err := r.Run(":8081"); err != nil {
+	fmt.Printf("Aplikasi berjalan di port %s\n", port)
+	fmt.Printf("Dokumentasi Scalar dapat diakses di http://localhost:%s/scalar atau http://localhost:%s/docs\n", port, port)
+
+	if err := r.Run(":" + port); err != nil {
 		log.Fatalf("Gagal menjalankan server: %v", err)
 	}
 }
