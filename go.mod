@@ -1,6 +1,6 @@
 module siswa
 
-go 1.23
+go 1.24
 
 require (
 	github.com/bytedance/gopkg v0.1.4 // indirect

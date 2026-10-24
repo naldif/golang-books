@@ -1,7 +1,10 @@
 # Stage 1: Build binary
-FROM golang:1.23-alpine AS builder
+FROM golang:1.24-alpine AS builder
 
 WORKDIR /app
+
+# Install git dan ca-certificates
+RUN apk add --no-cache git ca-certificates
 
 # Download dependencies
 COPY go.mod go.sum ./
@@ -14,7 +17,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o server .
 
 # Stage 2: Runtime image
-FROM alpine:3.20
+FROM alpine:3.21
 
 WORKDIR /app
 
