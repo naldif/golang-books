@@ -1,0 +1,1209 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Book Backend API",
+    "description": "Dokumentasi REST API Manajemen Buku - Bootcamp Sanbercode Golang. Sistem modular dengan Modul Auth (autentikasi JWT), Modul Users (pengelolaan pengguna), Modul Kategori, dan Modul Buku.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Server Saat Ini (Otomatis)"
+    },
+    {
+      "url": "https://be-books.up.railway.app",
+      "description": "Railway Production (be-books.up.railway.app)"
+    },
+    {
+      "url": "http://localhost:8081",
+      "description": "Local Development (localhost:8081)"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health Check & Status",
+        "description": "Mengecek status operasional Book Backend API dan versi sistem",
+        "tags": [
+          "System"
+        ],
+        "responses": {
+          "200": {
+            "description": "API berjalan dengan normal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RootResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register Pengguna Baru",
+        "description": "Mendaftarkan user baru ke dalam sistem untuk mendapatkan akses login",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User berhasil didaftarkan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseUser"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validasi input gagal atau username telah digunakan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login Pengguna",
+        "description": "Autentikasi pengguna untuk mendapatkan token JWT Bearer",
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login berhasil dan token JWT dikembalikan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseLogin"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Kredensial username atau password salah",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "summary": "Logout Pengguna",
+        "description": "Mengakhiri sesi autentikasi pengguna dan memberitahu client untuk menghapus token",
+        "tags": [
+          "Auth"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logout berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseBase"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized / Token tidak valid atau tidak disertakan"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "summary": "Dapatkan Semua User",
+        "description": "Mengambil seluruh daftar user yang terdaftar dalam sistem",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar user berhasil diambil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseUserList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized / Token tidak valid"
+          }
+        }
+      },
+      "post": {
+        "summary": "Tambah User Baru",
+        "description": "Menambahkan entri user baru dari panel manajemen user",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User berhasil dibuat",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseUser"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validasi input gagal atau username sudah ada"
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "summary": "Detail User",
+        "description": "Mengambil satu data detail user berdasarkan ID",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID User",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detail user ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseUser"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User tidak ditemukan"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update User",
+        "description": "Memperbarui username atau password user berdasarkan ID",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User berhasil diperbarui",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseUser"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User tidak ditemukan"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Hapus User",
+        "description": "Menghapus user dari database berdasarkan ID",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User berhasil dihapus"
+          },
+          "404": {
+            "description": "User tidak ditemukan"
+          }
+        }
+      }
+    },
+    "/api/categories": {
+      "get": {
+        "summary": "Dapatkan Semua Kategori",
+        "description": "Menampilkan seluruh daftar kategori buku yang tersimpan",
+        "tags": [
+          "Categories"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar kategori berhasil diambil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseCategoryList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized / Token tidak valid"
+          }
+        }
+      },
+      "post": {
+        "summary": "Tambah Kategori Baru",
+        "description": "Menambahkan entri kategori buku baru",
+        "tags": [
+          "Categories"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Kategori berhasil ditambahkan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseCategory"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validasi gagal: Nama kategori wajib diisi"
+          }
+        }
+      }
+    },
+    "/api/categories/{id}": {
+      "get": {
+        "summary": "Detail Kategori",
+        "description": "Mengambil satu detail kategori berdasarkan ID",
+        "tags": [
+          "Categories"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID Kategori",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detail kategori ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseCategory"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Kategori tidak ditemukan"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Kategori",
+        "description": "Memperbarui nama kategori berdasarkan ID",
+        "tags": [
+          "Categories"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Kategori berhasil diperbarui",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseCategory"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Kategori tidak ditemukan"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Hapus Kategori",
+        "description": "Menghapus kategori berdasarkan ID",
+        "tags": [
+          "Categories"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kategori berhasil dihapus"
+          },
+          "404": {
+            "description": "Kategori tidak ditemukan"
+          }
+        }
+      }
+    },
+    "/api/categories/{id}/books": {
+      "get": {
+        "summary": "Daftar Buku Berdasarkan Kategori",
+        "description": "Mengambil seluruh buku yang terdaftar di dalam kategori tertentu",
+        "tags": [
+          "Categories"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar buku per kategori berhasil diambil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseBookList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Kategori tidak ditemukan"
+          }
+        }
+      }
+    },
+    "/api/books": {
+      "get": {
+        "summary": "Dapatkan Semua Buku",
+        "description": "Menampilkan seluruh koleksi buku beserta relasi kategori",
+        "tags": [
+          "Books"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar buku berhasil diambil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseBookList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Tambah Buku Baru",
+        "description": "Menambahkan entri buku baru. `release_year` wajib antara 1980 s.d 2024. Kolom `thickness` akan dihitung otomatis: total_page > 100 menghasilkan 'tebal', dan total_page <= 100 menghasilkan 'tipis'.",
+        "tags": [
+          "Books"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Buku berhasil ditambahkan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseBook"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validasi gagal: release_year harus antara 1980 - 2024 atau input lainnya tidak valid"
+          }
+        }
+      }
+    },
+    "/api/books/{id}": {
+      "get": {
+        "summary": "Detail Buku",
+        "description": "Mengambil satu data detail buku berdasarkan ID",
+        "tags": [
+          "Books"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detail buku ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseBook"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Buku tidak ditemukan"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Buku",
+        "description": "Memperbarui data buku berdasarkan ID. Ketebalan (`thickness`) akan otomatis dihitung ulang.",
+        "tags": [
+          "Books"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Buku berhasil diperbarui",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIResponseBook"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Buku tidak ditemukan"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Hapus Buku",
+        "description": "Menghapus data buku dari sistem berdasarkan ID",
+        "tags": [
+          "Books"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Buku berhasil dihapus"
+          },
+          "404": {
+            "description": "Buku tidak ditemukan"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Masukkan JWT token Anda. Contoh format: Bearer {token}"
+      }
+    },
+    "schemas": {
+      "RootResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Book Backend API is running"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "Book Backend API"
+              },
+              "status": {
+                "type": "string",
+                "example": "healthy"
+              },
+              "version": {
+                "type": "string",
+                "example": "1.0.0"
+              }
+            }
+          }
+        }
+      },
+      "RegisterInput": {
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 4,
+            "example": "admin_sanber"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "example": "rahasia123"
+          }
+        }
+      },
+      "LoginInput": {
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "admin_sanber"
+          },
+          "password": {
+            "type": "string",
+            "example": "rahasia123"
+          }
+        }
+      },
+      "CreateUserInput": {
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 4,
+            "example": "budi_santoso"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "example": "password123"
+          }
+        }
+      },
+      "UpdateUserInput": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "budi_baru"
+          },
+          "password": {
+            "type": "string",
+            "example": "passwordBaru123"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "username": {
+            "type": "string",
+            "example": "admin_sanber"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string",
+            "example": "admin"
+          },
+          "modified_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modified_by": {
+            "type": "string",
+            "example": "admin"
+          }
+        }
+      },
+      "CreateCategoryInput": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Pemrograman & Teknologi"
+          }
+        }
+      },
+      "CreateBookInput": {
+        "type": "object",
+        "required": [
+          "title",
+          "release_year",
+          "price",
+          "total_page",
+          "category_id"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Mastering Golang Web Architecture"
+          },
+          "description": {
+            "type": "string",
+            "example": "Panduan komprehensif membangun RESTful API modern dengan Golang dan Gin."
+          },
+          "image_url": {
+            "type": "string",
+            "example": "https://images.unsplash.com/photo-1532012164546-f432f2e3edd3"
+          },
+          "release_year": {
+            "type": "integer",
+            "minimum": 1980,
+            "maximum": 2024,
+            "example": 2023
+          },
+          "price": {
+            "type": "integer",
+            "example": 150000
+          },
+          "total_page": {
+            "type": "integer",
+            "example": 350
+          },
+          "category_id": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Pemrograman & Teknologi"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string",
+            "example": "admin"
+          },
+          "modified_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modified_by": {
+            "type": "string",
+            "example": "admin"
+          }
+        }
+      },
+      "Book": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "example": "Mastering Golang Web Architecture"
+          },
+          "description": {
+            "type": "string",
+            "example": "Panduan komprehensif membangun RESTful API"
+          },
+          "image_url": {
+            "type": "string",
+            "example": "https://example.com/cover.jpg"
+          },
+          "release_year": {
+            "type": "integer",
+            "example": 2023
+          },
+          "price": {
+            "type": "integer",
+            "example": 150000
+          },
+          "total_page": {
+            "type": "integer",
+            "example": 350
+          },
+          "thickness": {
+            "type": "string",
+            "example": "tebal"
+          },
+          "category_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string",
+            "example": "admin"
+          },
+          "modified_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modified_by": {
+            "type": "string",
+            "example": "admin"
+          }
+        }
+      },
+      "APIResponseLogin": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Login berhasil"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "token": {
+                "type": "string",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+              }
+            }
+          }
+        }
+      },
+      "APIResponseUser": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "User berhasil diproses"
+          },
+          "data": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "APIResponseUserList": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Daftar user berhasil diambil"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          }
+        }
+      },
+      "APIResponseCategory": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Kategori berhasil diproses"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Category"
+          }
+        }
+      },
+      "APIResponseCategoryList": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Daftar kategori berhasil diambil"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          }
+        }
+      },
+      "APIResponseBook": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Buku berhasil diproses"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Book"
+          }
+        }
+      },
+      "APIResponseBookList": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Daftar buku berhasil diambil"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Book"
+            }
+          }
+        }
+      },
+      "APIResponseError": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Username atau password salah"
+          },
+          "errors": {
+            "nullable": true,
+            "example": null
+          }
+        }
+      },
+      "APIResponseValidationError": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Validasi data gagal"
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "example": {
+              "title": [
+                "Field 'title' wajib diisi"
+              ],
+              "release_year": [
+                "Tahun rilis harus di antara tahun 1980 dan 2024"
+              ]
+            }
+          }
+        }
+      },
+      "APIResponseBase": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Operasi berhasil"
+          }
+        }
+      }
+    }
+  }
+}
