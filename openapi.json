@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Book Backend API",
-    "description": "Dokumentasi REST API Manajemen Buku - Bootcamp Sanbercode Golang. Sistem modular dengan Modul Auth (autentikasi JWT), Modul Users (pengelolaan pengguna), Modul Kategori, dan Modul Buku.",
+    "description": "Dokumentasi REST API Manajemen Buku - Bootcamp Sanbercode Golang. Sistem modular dengan Modul Auth (autentikasi JWT), Modul Users (pengelolaan pengguna), Modul Kategori, dan Modul Buku.\n\nAkun Pengujian (Seeder):\n- Username: nito\n- Password: password123!",
     "version": "1.0.0"
   },
   "servers": [
